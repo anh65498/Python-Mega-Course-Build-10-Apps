@@ -49,4 +49,4 @@ def cel_to_fahr(cel):
         fah = cel * 9/5 + 32;
         return fah;
 
-cel_to_fahr
+print("25 C to F : " + str(cel_to_fahr(25)));
