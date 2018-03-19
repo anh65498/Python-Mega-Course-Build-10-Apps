@@ -10,7 +10,7 @@ folium.Marker([37.335142, -121.881276], popup="SJSU").add_to(map)
 
 #2. add multiple location markers. 2 ways: Feature group or loop
 #Feature Group: keep your code more organized and help when you add a control layer
-feature_group = folium.FeatureGroup(name="My Map")
+feature_group = folium.FeatureGroup(name="Location Markers")
 feature_group.add_child(folium.Marker([37.871906, -122.258563],
               popup='University of California, Berkeley',
               icon=folium.Icon(icon='bookmark')))
@@ -58,7 +58,22 @@ popup argument reads the value as html by default.
 If there are characters such as ' map will not be displayed.
 this is why can't pass name like lt and ln
 '''
+#CREATE A POLYGON MAP (for area, countries). default color is green
+fg = folium.FeatureGroup(name="Polygon's Features")
+fg.add_child(folium.GeoJson(open('world.json', 'r', encoding='utf-8-sig').read(), name='geojson',
+            style_function= lambda x: {
+                #assign the polygon map yellow color for country with population < 10 mil
+                "fillColor": "green" if x['properties']['POP2005'] < 10000000
+                #assign the map polygons cyan if population is between 10mil  and 20mil
+                else "orange" if 10000000 <= x['properties']['POP2005'] < 20000000
+                else "red"
 
-map.add_child(feature_group)
+            }))
+
+#CREATE A COUNTRY-BY-POPULATION MAP with Choropleth map
+
+
+map.add_child(feature_group)    #custom layer
+map.add_child(fg)               #polygon layer
 #save the map
 map.save("Map1.html")
