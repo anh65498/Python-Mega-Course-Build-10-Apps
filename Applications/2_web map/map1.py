@@ -14,17 +14,17 @@ folium.Marker([37.335142, -121.881276], popup="SJSU",
 basic_fg = folium.FeatureGroup(name="Basic Locations")
 basic_fg.add_child(folium.Marker([37.871906, -122.258563],
               popup='University of California, Berkeley',
-              icon=folium.Icon(icon='education')))
+              icon=folium.Icon(icon='flag')))
 basic_fg.add_child(folium.Marker([32.882407, -117.234817],
                 popup='University of California, San Diego',
-                icon=folium.Icon(icon='education')))
-asic_fg.add_child(folium.Marker([34.068921, -118.445181],
+                icon=folium.Icon(icon='flag')))
+basic_fg.add_child(folium.Marker([34.068921, -118.445181],
                 popup='University of California, Los Angeles',
-                icon=folium.Icon(icon='education')))
+                icon=folium.Icon(icon='flag')))
 #FOR loop
 for coordinates in [[36.129075, -115.165290], [36.102576, -115.170253], [36.124745, -115.172081]]:
     basic_fg.add_child(folium.Marker(coordinates,popup='Las Vegas hotel',
-                  icon=folium.Icon(color='white', icon="star-empty")))
+                  icon=folium.Icon(color='green', icon="star-empty")))
 
 #import information from a text file and add location markers for each address
 import pandas
@@ -33,7 +33,7 @@ df = pandas.read_csv("Volcanoes_USA.txt")
 latitude_list = list(df["LAT"])         #list of latitudes
 longitude_list = list(df["LON"])        #list of longitudes
 elevation_list = list(df["ELEV"])       #list of elevation
-html = """<h4><center> %s </center></h4> %s <br>
+html = """<h4><center> %s </center></h4><center> %s <center><br>
 """
 name_list = list(df["NAME"])            #list of volcanoes' name
 #len(latitude_list)     #return the number of item in list
@@ -50,7 +50,7 @@ def  color_code(elevation):
 
 #create location markers with longitude, latitude, name, elevation of each volcano
 for lt, ln, nm, ele in zip(latitude_list, longitude_list, name_list, elevation_list):
-    iframe = folium.IFrame(html=html %(str(nm), "Elevation: " + str(ele)), width=100,height=50)
+    iframe = folium.IFrame(html=html %(str(nm), "Elevation: " + str(ele)), width=200,height=100)
     col = color_code(ele)
 
 #dir(folium)
@@ -81,6 +81,6 @@ map.add_child(vol_fg)           #volcanoes location layer
 #if add_child(vol_fg) goes before add_child(pop_fg), volcanoes' popup will not show
 
 #turn on/off between base, location marker and choropleth map
-map.add_child(folium.LayerControl())
+map.add_child(folium.LayerControl(collapsed="false"))
 #save the map
 map.save("Map1.html")
