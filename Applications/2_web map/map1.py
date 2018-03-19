@@ -1,11 +1,11 @@
 #create a base map
 import folium           #works with python3
-map = folium.Map(location=[37.335142, -121.881276], zoom_start=11, tiles="OpenStreetMap")
+map = folium.Map(location=[37.335142, -121.881276], zoom_start=5, tiles="OpenStreetMap")
 #help(folium.Map) to see parameters
 
 #ADD LOCATION MARKERS (those Google Map's red marker)
 #1. add 1 location marker
-folium.Marker([37.335142, -121.881276], popup="Dima").add_to(map)
+folium.Marker([37.335142, -121.881276], popup="SJSU").add_to(map)
 #python create JavaScript code using the Leaflet library
 
 #2. add multiple location markers. 2 ways: Feature group or loop
@@ -21,18 +21,44 @@ feature_group.add_child(folium.Marker([32.882407, -117.234817],
 for coordinates in [[36.129075, -115.165290], [36.102576, -115.170253], [36.124745, -115.172081]]:
     feature_group.add_child(folium.Marker(coordinates,popup='Las Vegas hotel',
                   icon=folium.Icon(color='salmon')))
-#import address from a text file and add location markers for each address
+
+#import information from a text file and add location markers for each address
 import pandas
 df = pandas.read_csv("Volcanoes_USA.txt")
 #print(volcanoes_data)
-latitude_list = list(df["LAT"])
-longitude_list = list(df["LON"])
+latitude_list = list(df["LAT"])         #list of latitudes
+longitude_list = list(df["LON"])        #list of longitudes
+elevation_list = list(df["ELEV"])       #list of elevation
+html = """<h4><center> %s </center></h4> %s <br>
+"""
+name_list = list(df["NAME"])            #list of volcanoes' name
 #len(latitude_list)     #return the number of item in list
-for lt, ln in zip(latitude_list, longitude_list):
-    feature_group.add_child(folium.Marker([lt,ln],popup='Volcano'))
+#color_code: function return a string of color for a location marker based on its elevation
+def  color_code(elevation):
+    if ele < 1000:
+        col = "green"
+    elif 1000 <= ele <= 3000:
+        col = "orange"
+    else:
+        col ="red"
+    return col
 
+#create location markers with longitude, latitude, name, elevation of each volcano
+for lt, ln, nm, ele in zip(latitude_list, longitude_list, name_list, elevation_list):
+    iframe = folium.IFrame(html=html %(str(nm), "Elevation: " + str(ele)), width=200,height=100)
+    col = color_code(ele)
+
+#dir(folium)
+#help(folium.CircleMarker)
+    feature_group.add_child(folium.CircleMarker([lt,ln],
+                            popup=folium.Popup(iframe),
+                            color="grey", fill_color= str(col), fill="true", fill_opacity=0.7))
+'''
+popup argument reads the value as html by default.
+If there are characters such as ' map will not be displayed.
+this is why can't pass name like lt and ln
+'''
 
 map.add_child(feature_group)
-
 #save the map
 map.save("Map1.html")
